@@ -270,9 +270,7 @@ for i = 0 to array.size(eventTimes) - 1
         if is_historical
             bar_color := colorHistorical
         else
-            bar_color := eventMag >= 20 ? colorX20plus :
-                        eventMag >= 10 ? colorX10to20 :
-                        eventMag >= 5 ? colorX5to10 : colorX1to5
+            bar_color := eventMag >= 20 ? colorX20plus : eventMag >= 10 ? colorX10to20 : eventMag >= 5 ? colorX5to10 : colorX1to5
         break
 
 // Reset if no match
