@@ -244,10 +244,11 @@ if barstate.isfirst
 // ══════════════════════════════════════════════════════════════════
 
 // Find matching event for current bar
-var float magnitude = 0.0
-var string label_text = ""
-var color bar_color = na
-var bool is_historical = false
+// Reset values for each bar (don't use var here!)
+float magnitude = 0.0
+string label_text = ""
+color bar_color = na
+bool is_historical = false
 
 // Check each event
 for i = 0 to array.size(eventTimes) - 1
@@ -272,12 +273,6 @@ for i = 0 to array.size(eventTimes) - 1
         else
             bar_color := eventMag >= 20 ? colorX20plus : eventMag >= 10 ? colorX10to20 : eventMag >= 5 ? colorX5to10 : colorX1to5
         break
-
-// Reset if no match
-if na(bar_color)
-    magnitude := 0.0
-    label_text := ""
-    is_historical := false
 
 // Plot style
 plotStyleValue = plotStyle == "Columns" ? plot.style_columns :
