@@ -2,7 +2,7 @@
 // © salvia420
 
 //@version=6
-indicator("X-Class Solar Flare Tracker", shorttitle="X-Flares", overlay=true)
+indicator("X-Class Solar Flare Tracker", shorttitle="X-Flares", overlay=false)
 
 // ════════════════════════════════════════════════════════════════════════════
 // 📊 ABOUT THIS SCRIPT
@@ -25,11 +25,12 @@ indicator("X-Class Solar Flare Tracker", shorttitle="X-Flares", overlay=true)
 // ══════════════════════════════════════════════════════════════════
 // 🎛️ USER INPUTS
 // ══════════════════════════════════════════════════════════════════
-showFlareMarkers = input.bool(true, "Show Flare Markers on Chart", group="Display Options")
+plotStyle = input.string("Columns", "Display Style", options=["Columns", "Histogram", "Line"], group="Display Options")
 minMagnitude = input.float(1.0, "Minimum X-Class Magnitude to Display", minval=1.0, maxval=50.0, step=0.1, group="Display Options")
 showLabels = input.bool(true, "Show Flare Magnitude Labels", group="Display Options")
 showTable = input.bool(true, "Show Flare Statistics Table", group="Display Options")
 tablePosition = input.string("Top Right", "Table Position", options=["Top Right", "Top Left", "Bottom Right", "Bottom Left"], group="Display Options")
+showZeroLine = input.bool(true, "Show Zero Baseline", group="Display Options")
 
 // Color scheme
 colorX1to5 = input.color(color.yellow, "X1-X5 Flares", group="Colors")
@@ -224,48 +225,60 @@ if barstate.isfirst
 currentTime = time
 
 // Variables to track flare on current bar
-var float flareOnBar = na
-var string flareLabel = na
+var float flareMagnitude = 0.0
+var string flareLabel = ""
 var color flareColor = na
 
 // Check if there's a flare on this timestamp
-if showFlareMarkers
-    for i = 0 to array.size(flareTimes) - 1
-        flareTime = array.get(flareTimes, i)
-        flareMag = array.get(flareMags, i)
-        flareDesc = array.get(flareDescs, i)
+for i = 0 to array.size(flareTimes) - 1
+    flareTime = array.get(flareTimes, i)
+    flareMag = array.get(flareMags, i)
+    flareDesc = array.get(flareDescs, i)
 
-        // Check if flare occurs on this day (within 24 hours)
-        timeDiff = math.abs(currentTime - flareTime)
-        if timeDiff < 86400000 and flareMag >= minMagnitude  // 86400000ms = 24 hours
-            flareOnBar := flareMag
-            flareLabel := flareDesc
+    // Check if flare occurs on this day (within 24 hours)
+    timeDiff = math.abs(currentTime - flareTime)
+    if timeDiff < 86400000 and flareMag >= minMagnitude  // 86400000ms = 24 hours
+        flareMagnitude := flareMag
+        flareLabel := flareDesc
 
-            // Assign color based on magnitude
-            flareColor := flareMag >= 20 ? colorX20plus :
-                         flareMag >= 10 ? colorX10to20 :
-                         flareMag >= 5 ? colorX5to10 : colorX1to5
+        // Assign color based on magnitude
+        flareColor := flareMag >= 20 ? colorX20plus :
+                     flareMag >= 10 ? colorX10to20 :
+                     flareMag >= 5 ? colorX5to10 : colorX1to5
+        break
 
-// Plot markers at the high of the bar
-plotshape(
-     series=flareOnBar,
-     style=shape.triangledown,
-     location=location.abovebar,
-     color=flareColor,
-     size=size.normal,
-     title="Solar Flare Marker"
- )
+// If no flare found, reset to zero
+if na(flareColor)
+    flareMagnitude := 0.0
+    flareLabel := ""
 
-// Add labels with flare magnitude
-if showLabels and not na(flareOnBar)
+// Determine plot style
+plotStyleValue = plotStyle == "Columns" ? plot.style_columns :
+                 plotStyle == "Histogram" ? plot.style_histogram :
+                 plot.style_line
+
+// Plot the magnitude values
+plot(flareMagnitude, title="Solar Flare Magnitude", color=flareColor, style=plotStyleValue, linewidth=2)
+
+// Plot zero baseline
+hline(0, "Zero Line", color=color.new(color.gray, 50), linestyle=hline.style_solid, linewidth=1, display=showZeroLine ? display.all : display.none)
+
+// Add reference lines for magnitude thresholds
+hline(5, "X5", color=color.new(colorX5to10, 70), linestyle=hline.style_dotted, linewidth=1)
+hline(10, "X10", color=color.new(colorX10to20, 70), linestyle=hline.style_dotted, linewidth=1)
+hline(20, "X20", color=color.new(colorX20plus, 70), linestyle=hline.style_dotted, linewidth=1)
+
+// Add labels with flare details
+if showLabels and flareMagnitude > 0
     label.new(
          bar_index,
-         high,
+         flareMagnitude,
          text=flareLabel,
-         style=label.style_label_down,
+         style=label.style_label_up,
          color=flareColor,
          textcolor=color.white,
-         size=size.small
+         size=size.small,
+         yloc=yloc.price
      )
 
 // ══════════════════════════════════════════════════════════════════
@@ -334,7 +347,8 @@ if showTable and barstate.islast
         table.cell(statsTable, 1, 7, maxFlareDate, text_color=color.white, bgcolor=color.new(color.gray, 50), text_size=size.tiny)
 
 // ══════════════════════════════════════════════════════════════════
-// 📈 PLOT PRICE (OPTIONAL - for reference)
+// 📈 CHART DISPLAY
 // ══════════════════════════════════════════════════════════════════
-// Uncomment the line below if you want to see the underlying asset price
-// plot(close, "Price", color=color.new(color.blue, 70), linewidth=1)
+// This indicator displays in a separate panel below the price chart.
+// You can now compare solar flare magnitudes with price action by
+// viewing them side-by-side in different panes.

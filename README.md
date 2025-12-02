@@ -5,8 +5,11 @@ A comprehensive TradingView Pine Script indicator that tracks and visualizes X-c
 ## 📊 Features
 
 - **Historical Data**: Includes major X-class flares from 1989 to November 2024
-- **Visual Markers**: Color-coded triangles appear on the chart when solar flares occurred
+- **Separate Panel Display**: Shows solar flare magnitudes in a dedicated chart panel below the price chart
+- **Multiple Visualization Styles**: Choose between Columns, Histogram, or Line display
+- **Magnitude Bars**: Color-coded bars representing the intensity of each solar flare
 - **Magnitude Labels**: Shows the exact X-class rating (e.g., "2024-10-03 X9.0")
+- **Reference Lines**: Horizontal lines at X5, X10, and X20 thresholds for easy comparison
 - **Statistics Table**: Real-time statistics showing:
   - Total number of X-flares in the dataset
   - Breakdown by magnitude categories (X1-X5, X5-X10, X10-X20, X20+)
@@ -14,7 +17,8 @@ A comprehensive TradingView Pine Script indicator that tracks and visualizes X-c
 - **Customizable Display**:
   - Filter by minimum magnitude
   - Adjust colors for different flare categories
-  - Toggle markers, labels, and statistics table
+  - Choose display style (Columns/Histogram/Line)
+  - Toggle labels and statistics table
   - Choose table position on chart
 
 ## 🎨 Color Coding
@@ -56,21 +60,22 @@ This script includes:
 3. Paste it into the Pine Editor
 4. Click **"Add to Chart"**
 
-The indicator will appear as an overlay on your chart with triangular markers showing where solar flares occurred.
+The indicator will appear in a **separate panel below your price chart**, displaying solar flare magnitudes as color-coded bars. This allows you to compare solar activity with price movements side-by-side!
 
 ### Customization
 
 Access the settings by clicking the gear icon ⚙️ next to the indicator name:
 
 **Display Options:**
-- **Show Flare Markers on Chart**: Toggle the triangular markers
+- **Display Style**: Choose between Columns (default), Histogram, or Line visualization
 - **Minimum X-Class Magnitude to Display**: Filter out smaller flares (1.0 to 50.0)
-- **Show Flare Magnitude Labels**: Toggle the text labels
+- **Show Flare Magnitude Labels**: Toggle the text labels showing date and magnitude
 - **Show Flare Statistics Table**: Toggle the statistics box
-- **Table Position**: Choose where the statistics appear
+- **Table Position**: Choose where the statistics appear (Top/Bottom, Left/Right)
+- **Show Zero Baseline**: Toggle the baseline at magnitude 0
 
 **Colors:**
-- Customize the color for each magnitude category
+- Customize the color for each magnitude category (X1-X5, X5-X10, X10-X20, X20+)
 
 ## 🔄 Updating with New Solar Flares
 
@@ -119,15 +124,26 @@ array.push(flareTimes, 1736951400000), array.push(flareMags, 5.5), array.push(fl
 ### Step 5: Save and Refresh
 
 1. Click **Save** in the Pine Editor
-2. The chart will automatically update with the new flare marker
+2. The chart will automatically update with the new flare bar
 
 ## 📈 Understanding the Display
 
-- **Triangular Markers**: Appear above the bar on the day the flare occurred
-- **Labels**: Show the date and magnitude (e.g., "2024-10-03 X9.0")
-- **Statistics Table**: Updates automatically to reflect all flares in the dataset
+The indicator displays in a **separate panel below the price chart**, allowing you to compare solar activity with market movements:
 
-**Note**: The markers appear on the chart based on the timestamp. Since solar flares are specific events and most financial charts show daily or longer timeframes, the marker will appear on the bar that includes that date.
+- **Magnitude Bars/Columns**: Color-coded bars show the intensity of each solar flare
+  - Height represents the X-class magnitude (e.g., X9.0 = bar height of 9)
+  - Days without flares show no bar (magnitude 0)
+- **Reference Lines**: Dotted horizontal lines at X5, X10, and X20 help identify flare severity
+- **Labels**: Show the exact date and magnitude (e.g., "2024-10-03 X9.0")
+- **Statistics Table**: Updates automatically to reflect all flares in the dataset
+- **Zero Baseline**: Shows the baseline where no solar activity is present
+
+**Visualization Styles:**
+- **Columns** (default): Solid vertical bars from zero to magnitude
+- **Histogram**: Similar to columns with different styling
+- **Line**: Connects flare magnitudes with a line chart
+
+**Note**: Since solar flares are discrete events, you'll see bars only on days when flares occurred. The rest of the time the chart stays at zero, making it easy to spot solar activity spikes and compare them with price movements.
 
 ## 🌟 Notable Solar Flares in the Dataset
 
