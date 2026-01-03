@@ -270,5 +270,5 @@ if showTable and barstate.islast
     table.cell(tbl, 1, 6, str.tostring(math.round(days)) + "d", text_color=days < 30 ? color.red : color.green)
 
 // 🚨 ALERTS
-alertcondition(barMag >= 1.0, title="X-Class Flare", message="Solar Flare Detected: {{plot("Magnitude")}}")
+alertcondition(barMag >= 1.0, title="X-Class Flare", message="Solar Flare Detected: {{plot('Magnitude')}}")
 alertcondition(barMag >= 10.0, title="Major Solar Storm", message="Major X10+ Event Detected")
