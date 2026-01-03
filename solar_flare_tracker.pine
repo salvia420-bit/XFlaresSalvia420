@@ -135,11 +135,18 @@ while ptr < array.size(events)
     if e.ts >= t_end
         // Event is in the future for this bar
         break
-    else if e.ts < t_start
-        // Event is older than this bar (we missed it or it was in a gap)
+
+    // Check if event matches this bar:
+    // 1. Strictly inside [t_start, t_end)
+    // 2. OR on the same calendar day (handles 00:00 UTC vs Market Open offset)
+    bool same_day = year(e.ts) == year(t_start) and month(e.ts) == month(t_start) and dayofmonth(e.ts) == dayofmonth(t_start)
+    bool is_match = (e.ts >= t_start) or same_day
+
+    if not is_match
+        // Event is older than this bar and not on same day -> Skip it
         ptr += 1
     else
-        // ✅ Event is INSIDE this bar (t_start <= ts < t_end)
+        // ✅ Event is MATCHED
         // Apply Filters
         bool visible = true
         if e.isHist and not showHist
@@ -165,7 +172,7 @@ while ptr < array.size(events)
             
             eventCount += 1
         
-        // Move to next event to see if it also falls in this bar
+        // Move to next event to see if it also falls in this bar (or same day)
         ptr += 1
 
 
